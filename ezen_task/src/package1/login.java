@@ -3,24 +3,28 @@ package package1;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Scanner;
 
 import com.mysql.cj.xdevapi.PreparableStatement;
 
 public class login {
 
-	public PreparedStatement pstmt;
-	public ResultSet rs;
-	public Connection conn;
+	public static PreparedStatement pstmt;
+	public static ResultSet rs;
+	public static Connection conn;
 	
-	public Connection getConnection() {
+	public static Connection getConnection() {
 		try {
 			conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/login", "root", "0000"); 
 			System.out.println("success");
 		}catch(SQLException e) {
 			System.out.println("SQLException" + e);
 		}
+		
+		return conn;
 	}
 	
 	
