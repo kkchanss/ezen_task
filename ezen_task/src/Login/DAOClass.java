@@ -25,7 +25,7 @@ public class DAOClass {
 		return conn;
 	}
 	
-	// 회원가입
+	// 회원가입 (회원 정보 DB 저장)
 	public static void insert_data(String id, String pw) {
 		String SQL = "insert into member(mid, mpwd) values(?,?)";	
 		try {
@@ -79,18 +79,19 @@ public class DAOClass {
 		return -2; // DB 오류
 	}
 	
-	// 게시판
-	public static void board_f(String id) {
+	// 게시판 목록
+	public static ArrayList board_list() {
 			
 		Scanner sc = new Scanner(System.in);
-			
+		ArrayList<boardBean> list = new ArrayList<boardBean>();
+		
 		while(true) {
 		
 			String SQL = "SELECT title, name, time, hits FROM board";
 			System.out.println("번호\t제목\t작성자\t작성일\t조회수");
 				
 			// 결과 담을 ArrayList 생성
-			ArrayList<boardBean> list = new ArrayList<boardBean>();
+			
 				
 			try {
 				conn = getConnection();
@@ -116,55 +117,33 @@ public class DAOClass {
 				+ "\t" + list.get(i).getHits());
 			}
 				
-			System.out.println("1. 글쓰기 2. 글보기 3. 로그아웃 4. 이전 5. 다음");
-			int num = sc.nextInt();
+		
+		}
+		
+		return list;
+	}
+	
+	// 게시판 보기
+	public static void read_board() {
+		
+	}
+	
+	// 게시판 쓰기 
+	public static void write_board(String titleIn, String contentIn, String id) {
+		String SQL = "insert into board(title, mid, hits, content) values(?,?,?,?)";
+		try {
+			pstmt = conn.prepareStatement(SQL);
+			pstmt.setString(1, titleIn);
+			pstmt.setString(2, id);
+			pstmt.setInt(3, 0);
+			pstmt.setString(4, contentIn);
 				
-			if(num == 1) {
-				System.out.println("제목 입력 : ");
-				String titleIn = sc.next();
-				System.out.println("내용 입력 : ");
-				String contentIn = sc.next();
-					
-				SQL = "insert into board(title, mid, hits, content) values(?,?,?,?)";
-				try {
-					pstmt = conn.prepareStatement(SQL);
-					pstmt.setString(1, titleIn);
-					pstmt.setString(2, id);
-					pstmt.setInt(3, 0);
-					pstmt.setString(4, contentIn);
-						
-					pstmt.executeUpdate();
-					System.out.println("성공적으로 글이 등록되었습니다.");
-						
-				}catch(Exception e) {
-					e.printStackTrace();
-				}
-			}
-			else if(num == 2) {
-				while(true) {
-					System.out.println("몇 번째 글을 보실껀가요?");
-					int num2 = sc.nextInt();
-					if(num2 < 1 || num2 >= list.size()) {
-						System.out.println("다시 선택해주시길 바랍니다.");
-						continue;
-					}
-					break;
-				}
-				SQL = "update board set hits='?' where time=?";
+			pstmt.executeUpdate();
+			System.out.println("성공적으로 글이 등록되었습니다.");
 				
-				try {
-					
-				}catch(Exception e) {
-					e.printStackTrace();
-				}
-				
-				SQL = "select title, name, hits, content from board where mid = ?";
-				System.out.println("제목\t작성자\t조회수");
-			}
-			else if(num == 3) {
-				System.out.println("로그아웃이 됩니다.");
-				return;
-			}
+		}catch(Exception e) {
+			e.printStackTrace();
 		}
 	}
+
 }

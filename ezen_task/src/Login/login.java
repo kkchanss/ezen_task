@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 import Login.DAOClass;
 
-
+// 게시판 객체
 class boardBean{
 	
 	String title;
@@ -62,6 +62,7 @@ public class login {
 			System.out.println("1. 회원가입 2. 로그인 3. 종료");
 			int num = sc.nextInt();
 			
+			// 회원가입
 			if(num == 1) {
 				System.out.println("아이디 : ");
 				String id = sc.next();
@@ -69,14 +70,65 @@ public class login {
 				String pw = sc.next();
 				dao.insert_data(id, pw);
 			}
+			// 로그인
 			else if(num == 2) {
 				System.out.println("아이디 : ");
 				String id = sc.next();
 				System.out.println("비밀번호 : ");
 				String pw = sc.next();
 				int result = dao.login_f(id,pw);
+				
+				// 로그인 성공
 				if(result == 1) {
-					dao.board_f(id);
+					// 게시판 목록 출력
+					dao.board_list();
+					
+					System.out.println("1. 글쓰기 2. 글보기 3. 로그아웃 4. 이전 5. 다음");
+					int num2 = sc.nextInt();
+					
+					// 글 쓰기
+					if(num2 == 1) {
+						System.out.println("제목 입력 : ");
+						String titleIn = sc.next();
+						System.out.println("내용 입력 : ");
+						String contentIn = sc.next();
+							
+						// 글 저장
+						dao.write_board(titleIn, contentIn, id);
+					}
+					// 글 보기
+					else if(num2 == 2) {
+						while(true) {
+							System.out.println("몇 번째 글을 보실껀가요?");
+							int num3 = sc.nextInt();
+							if(num3 < 1 || num3 >= dao.list.size()) {
+								System.out.println("다시 선택해주시길 바랍니다.");
+								continue;
+							}
+							
+							break;
+						}
+						SQL = "update board set hits='?' where time=?";
+						
+						try {
+							
+						}catch(Exception e) {
+							e.printStackTrace();
+						}
+						
+						SQL = "select title, name, hits, content from board where mid = ?";
+						System.out.println("제목\t작성자\t조회수");
+					}
+					else if(num2 == 3) {
+						System.out.println("로그아웃이 됩니다.");
+						return;
+					}
+					else if(num2 == 4) {
+						
+					}
+					else if(num2 == 5) {
+						
+					}
 				}
 			}
 			else if(num == 3) {
