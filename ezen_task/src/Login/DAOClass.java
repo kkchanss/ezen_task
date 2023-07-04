@@ -100,6 +100,7 @@ public class DAOClass {
 					
 			while(rs.next()) {
 				boardBean bean = new boardBean();
+				bean.setBid(rs.getInt("bid"));
 				bean.setTitle(rs.getString("title"));
 				bean.setMid(rs.getString("mid"));
 				bean.setTime(rs.getString("time"));
@@ -112,7 +113,7 @@ public class DAOClass {
 		}
 			
 		for(int i = 0; i < list.size(); i++) {
-			System.out.println((i+1) +  "\t" + list.get(i).getTitle() + 
+			System.out.println(list.get(i).getBid() +  "\t" + list.get(i).getTitle() + 
 			"\t" + list.get(i).getMid() + "\t" + list.get(i).getTime() 
 			+ "\t" + list.get(i).getHits());
 		}
@@ -122,8 +123,10 @@ public class DAOClass {
 	
 	// 게시판 보기
 	public static void read_board(int read_num) {
-		//String SQL = "update board set hits='?' where =?";
-		String SQL = "select title,mid,hits,content board where b_id = read_num";
+		
+		hitsUp(read_num);
+		// 수정
+		String SQL = "select bid,title,mid,hits,content board where b_id = read_num";
 		System.out.println("제목\t작성자\t조회수\t내용");
 		ArrayList<boardBean> list = new ArrayList<boardBean>();
 		try {
@@ -153,6 +156,8 @@ public class DAOClass {
 	
 	// 게시판 쓰기 
 	public static void write_board(String titleIn, String contentIn, String id) {
+		
+		// 수정
 		String SQL = "insert into board(title, mid, hits, content) values(?,?,?,?)";
 		try {
 			pstmt = conn.prepareStatement(SQL);
@@ -167,6 +172,11 @@ public class DAOClass {
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	// 조회수 올리기
+	public static void hitsUp(int read_num) {
+		String SQL = "update board set hits='?' where =?";
 	}
 
 }

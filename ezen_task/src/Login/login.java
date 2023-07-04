@@ -13,12 +13,19 @@ import Login.DAOClass;
 // 게시판 객체
 class boardBean{
 	
+	int bid;
 	String title;
 	String mid;
 	String time;
 	String content;
 	int hits;
 	
+	public int getBid() {
+		return bid;
+	}
+	public void setBid(int bid) {
+		this.bid = bid;
+	}
 	public String getTitle() {
 		return title;
 	}
