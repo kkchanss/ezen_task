@@ -12,6 +12,8 @@ public class DAOClass {
 	public static PreparedStatement pstmt;
 	public static ResultSet rs;
 	public static Connection conn;
+	public static int page = 0;
+	public static int max_page = 0;
 	
 	// DB 연결
 	public static Connection getConnection() {
@@ -80,52 +82,73 @@ public class DAOClass {
 	}
 	
 	// 게시판 목록
-	public static ArrayList board_list() {
+	public static void board_list() {
 			
 		Scanner sc = new Scanner(System.in);
 		ArrayList<boardBean> list = new ArrayList<boardBean>();
 		
-		while(true) {
 		
-			String SQL = "SELECT title, name, time, hits FROM board";
-			System.out.println("번호\t제목\t작성자\t작성일\t조회수");
+		String SQL = "SELECT title, mid, time, hits FROM board";
+		System.out.println("번호\t제목\t작성자\t작성일\t조회수");
 				
-			// 결과 담을 ArrayList 생성
 			
 				
-			try {
-				conn = getConnection();
-				pstmt = conn.prepareStatement(SQL);
-				rs = pstmt.executeQuery();
+		try {
+			conn = getConnection();
+			pstmt = conn.prepareStatement(SQL);
+			rs = pstmt.executeQuery();
 					
-				while(rs.next()) {
-					boardBean bean = new boardBean();
-					bean.setTitle(rs.getString("title"));
-					bean.setName(rs.getString("name"));
-					bean.setTime(rs.getString("time"));
-					bean.setHits(rs.getInt("hits"));
-					list.add(bean);
-				}
-				
-			}catch(Exception e) {
-				e.printStackTrace();
+			while(rs.next()) {
+				boardBean bean = new boardBean();
+				bean.setTitle(rs.getString("title"));
+				bean.setMid(rs.getString("mid"));
+				bean.setTime(rs.getString("time"));
+				bean.setHits(rs.getInt("hits"));
+				list.add(bean);
 			}
 				
-			for(int i = 0; i < list.size(); i++) {
-				System.out.println((i+1) +  "\t" + list.get(i).getTitle() + 
-				"\t" + list.get(i).getName() + "\t" + list.get(i).getTime() 
-				+ "\t" + list.get(i).getHits());
-			}
-				
-		
+		}catch(Exception e) {
+			e.printStackTrace();
 		}
+			
+		for(int i = 0; i < list.size(); i++) {
+			System.out.println((i+1) +  "\t" + list.get(i).getTitle() + 
+			"\t" + list.get(i).getMid() + "\t" + list.get(i).getTime() 
+			+ "\t" + list.get(i).getHits());
+		}
+				
 		
-		return list;
 	}
 	
 	// 게시판 보기
-	public static void read_board() {
+	public static void read_board(int read_num) {
+		//String SQL = "update board set hits='?' where =?";
+		String SQL = "select title,mid,hits,content board where b_id = read_num";
+		System.out.println("제목\t작성자\t조회수\t내용");
+		ArrayList<boardBean> list = new ArrayList<boardBean>();
+		try {
+			conn = getConnection();
+			pstmt = conn.prepareStatement(SQL);
+			rs = pstmt.executeQuery();
+			
+			while(rs.next()) {
+				boardBean bean = new boardBean();
+				bean.setTitle(rs.getString("title"));
+				bean.setMid(rs.getString("mid"));
+				bean.setTime(rs.getString("time"));
+				bean.setHits(rs.getInt("hits"));
+				bean.setContent(rs.getString("content"));
+				list.add(bean);
+			}
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
 		
+		for(int i = 0; i < list.size(); i++) {
+			System.out.println((i+1) +  "\t" + list.get(i).getTitle() + 
+			"\t" + list.get(i).getMid() + "\t" + list.get(i).getHits() 
+			+ "\t" + list.get(i).getContent());
+		}
 	}
 	
 	// 게시판 쓰기 

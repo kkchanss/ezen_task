@@ -14,8 +14,9 @@ import Login.DAOClass;
 class boardBean{
 	
 	String title;
-	String name;
+	String mid;
 	String time;
+	String content;
 	int hits;
 	
 	public String getTitle() {
@@ -24,11 +25,11 @@ class boardBean{
 	public void setTitle(String title) {
 		this.title = title;
 	}
-	public String getName() {
-		return name;
+	public String getMid() {
+		return mid;
 	}
-	public void setName(String name) {
-		this.name = name;
+	public void setMid(String mid) {
+		this.mid = mid;
 	}
 	public String getTime() {
 		return time;
@@ -42,7 +43,12 @@ class boardBean{
 	public void setHits(int hits) {
 		this.hits = hits;
 	}
-	
+	public int getContent() {
+		return hits;
+	}
+	public void setContent(String content) {
+		this.content = content;
+	}
 	
 	
 }
@@ -80,54 +86,62 @@ public class login {
 				
 				// 로그인 성공
 				if(result == 1) {
-					// 게시판 목록 출력
-					dao.board_list();
-					
-					System.out.println("1. 글쓰기 2. 글보기 3. 로그아웃 4. 이전 5. 다음");
-					int num2 = sc.nextInt();
-					
-					// 글 쓰기
-					if(num2 == 1) {
-						System.out.println("제목 입력 : ");
-						String titleIn = sc.next();
-						System.out.println("내용 입력 : ");
-						String contentIn = sc.next();
-							
-						// 글 저장
-						dao.write_board(titleIn, contentIn, id);
-					}
-					// 글 보기
-					else if(num2 == 2) {
-						while(true) {
-							System.out.println("몇 번째 글을 보실껀가요?");
-							int num3 = sc.nextInt();
-							if(num3 < 1 || num3 >= dao.list.size()) {
-								System.out.println("다시 선택해주시길 바랍니다.");
-								continue;
+					while(true) {
+						// 게시판 목록 출력
+						dao.board_list();
+						
+						System.out.println("1. 글쓰기 2. 글보기 3. 로그아웃 4. 이전 5. 다음");
+						int num2 = sc.nextInt();
+						
+						// 글 쓰기
+						if(num2 == 1) {
+							System.out.println("제목 입력 : ");
+							String titleIn = sc.next();
+							System.out.println("내용 입력 : ");
+							String contentIn = sc.next();
+								
+							// 글 저장
+							dao.write_board(titleIn, contentIn, id);
+						}
+						// 글 보기
+						else if(num2 == 2) {
+							while(true) {
+								System.out.println("몇 번째 글을 보실껀가요?");
+								int num3 = sc.nextInt();
+								if(num3 < 1 || num3 > 3) {
+									System.out.println("다시 선택해주시길 바랍니다.");
+									continue;
+								}
+								read_board(num3);
+								break;
 							}
 							
+							
+							try {
+								
+							}catch(Exception e) {
+								e.printStackTrace();
+							}
+							
+							//SQL = "select title, name, hits, content from board where mid = ?";
+							System.out.println("제목\t작성자\t조회수");
+						}
+						else if(num2 == 3) {
+							System.out.println("로그아웃이 됩니다.");
 							break;
 						}
-						SQL = "update board set hits='?' where time=?";
-						
-						try {
+						else if(num2 == 4) {
+							if(dao.page == 0) {
+								System.out.println("최소 페이지입니다. 다시 선택해주시길 바랍니다.");
+							}
 							
-						}catch(Exception e) {
-							e.printStackTrace();
 						}
-						
-						SQL = "select title, name, hits, content from board where mid = ?";
-						System.out.println("제목\t작성자\t조회수");
-					}
-					else if(num2 == 3) {
-						System.out.println("로그아웃이 됩니다.");
-						return;
-					}
-					else if(num2 == 4) {
-						
-					}
-					else if(num2 == 5) {
-						
+						else if(num2 == 5) {
+							if(dao.page == dao.max_page) {
+								System.out.println("최대 페이지입니다. 다시 선택해주시길 바랍니다.");
+							}
+							
+						}
 					}
 				}
 			}
@@ -140,6 +154,11 @@ public class login {
 			}
 		}
 		
+	} // main end
+
+	private static void read_board(int num3) {
+		// TODO Auto-generated method stub
+		
 	}
 
-}
+} // class login end
