@@ -19,7 +19,7 @@ public class DAOClass {
 	public static Connection getConnection() {
 		try {
 			conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/login", "root", "0000"); 
-			System.out.println("success");
+			//ystem.out.println("success");
 		}catch(SQLException e) {
 			System.out.println("SQLException" + e);
 		}
@@ -62,7 +62,7 @@ public class DAOClass {
 			rs = pstmt.executeQuery();
 			if(rs.next()) {
 				if(rs.getString(1).contentEquals(pw)) {
-					System.out.println("로그인 성공");
+					System.out.println("로그인 성공\n");
 						
 					return 1; // 로그인 성공
 				}
@@ -88,7 +88,7 @@ public class DAOClass {
 		ArrayList<boardBean> list = new ArrayList<boardBean>();
 		
 		
-		String SQL = "SELECT title, mid, time, hits FROM board";
+		String SQL = "SELECT bid, title, mid, time, hits FROM board";
 		System.out.println("번호\t제목\t작성자\t작성일\t조회수");
 				
 			
@@ -123,22 +123,24 @@ public class DAOClass {
 	
 	// 게시판 보기
 	public static void read_board(int read_num) {
-		
+		System.out.println("게시판보기 들어옴");
+		// 조회수 올리기
 		hitsUp(read_num);
-		// 수정
-		String SQL = "select bid,title,mid,hits,content board where b_id = read_num";
-		System.out.println("제목\t작성자\t조회수\t내용");
+		
+		String SQL = "select bid,title,mid,hits,content from board where bid = ?";
+		System.out.println("번호\t제목\t작성자\t조회수\t내용");
 		ArrayList<boardBean> list = new ArrayList<boardBean>();
 		try {
 			conn = getConnection();
 			pstmt = conn.prepareStatement(SQL);
+			pstmt.setInt(1, read_num);
 			rs = pstmt.executeQuery();
 			
 			while(rs.next()) {
 				boardBean bean = new boardBean();
+				bean.setBid(rs.getInt("bid"));
 				bean.setTitle(rs.getString("title"));
 				bean.setMid(rs.getString("mid"));
-				bean.setTime(rs.getString("time"));
 				bean.setHits(rs.getInt("hits"));
 				bean.setContent(rs.getString("content"));
 				list.add(bean);
@@ -148,7 +150,7 @@ public class DAOClass {
 		}
 		
 		for(int i = 0; i < list.size(); i++) {
-			System.out.println((i+1) +  "\t" + list.get(i).getTitle() + 
+			System.out.println(list.get(i).getBid() + "\t" + list.get(i).getTitle() + 
 			"\t" + list.get(i).getMid() + "\t" + list.get(i).getHits() 
 			+ "\t" + list.get(i).getContent());
 		}
@@ -157,14 +159,30 @@ public class DAOClass {
 	// 게시판 쓰기 
 	public static void write_board(String titleIn, String contentIn, String id) {
 		
-		// 수정
-		String SQL = "insert into board(title, mid, hits, content) values(?,?,?,?)";
+		String SQL = "select count(*) from board";
+		int count = 0;
 		try {
 			pstmt = conn.prepareStatement(SQL);
-			pstmt.setString(1, titleIn);
-			pstmt.setString(2, id);
-			pstmt.setInt(3, 0);
-			pstmt.setString(4, contentIn);
+			rs = pstmt.executeQuery();
+			while(rs.next()) {
+				count = rs.getInt(1);
+				System.out.println("----------------count" + rs.getInt(1));
+				count++;
+			}
+				
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		// 수정
+		SQL = "insert into board(bid, title, mid, hits, content) values(?,?,?,?,?)";
+		try {
+			pstmt = conn.prepareStatement(SQL);
+			pstmt.setInt(1, count);
+			pstmt.setString(2, titleIn);
+			pstmt.setString(3, id);
+			pstmt.setInt(4, 0);
+			pstmt.setString(5, contentIn);
 				
 			pstmt.executeUpdate();
 			System.out.println("성공적으로 글이 등록되었습니다.");
@@ -176,7 +194,39 @@ public class DAOClass {
 	
 	// 조회수 올리기
 	public static void hitsUp(int read_num) {
-		String SQL = "update board set hits='?' where =?";
+		
+		int hitsUp = hitsGet(read_num);
+		String SQL = "update board set hits=? where bid=?";
+		try {
+			conn = getConnection();
+			pstmt = conn.prepareStatement(SQL);
+			pstmt.setInt(1, hitsUp);
+			pstmt.setInt(2, read_num);
+			pstmt.executeUpdate();
+			System.out.println("조회수가 올라갔습니다.");
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
 	}
-
+	
+	// 조회수 가져오기 
+	public static int hitsGet(int read_num) {
+		System.out.println("조회수 올리기 들어옴");
+		String SQL = "select hits from board where bid=?";
+		int hitsUp = 0;
+		//String SQL = "update board set hits='?' where bid=?";
+		try {
+			conn = getConnection();
+			pstmt = conn.prepareStatement(SQL);
+			pstmt.setInt(1, read_num);
+			rs = pstmt.executeQuery();
+			while(rs.next()) {
+				hitsUp = rs.getInt("hits");
+			}
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		hitsUp++;
+		return hitsUp;
+	}
 }

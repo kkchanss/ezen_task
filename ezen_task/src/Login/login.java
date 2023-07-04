@@ -50,8 +50,8 @@ class boardBean{
 	public void setHits(int hits) {
 		this.hits = hits;
 	}
-	public int getContent() {
-		return hits;
+	public String getContent() {
+		return content;
 	}
 	public void setContent(String content) {
 		this.content = content;
@@ -97,7 +97,7 @@ public class login {
 						// 게시판 목록 출력
 						dao.board_list();
 						
-						System.out.println("1. 글쓰기 2. 글보기 3. 로그아웃 4. 이전 5. 다음");
+						System.out.println("\n1. 글쓰기 2. 글보기 3. 로그아웃 4. 이전 5. 다음");
 						int num2 = sc.nextInt();
 						
 						// 글 쓰기
@@ -115,11 +115,7 @@ public class login {
 							while(true) {
 								System.out.println("몇 번째 글을 보실껀가요?");
 								int num3 = sc.nextInt();
-								if(num3 < 1 || num3 > 3) {
-									System.out.println("다시 선택해주시길 바랍니다.");
-									continue;
-								}
-								read_board(num3);
+								dao.read_board(num3);
 								break;
 							}
 							
@@ -130,8 +126,6 @@ public class login {
 								e.printStackTrace();
 							}
 							
-							//SQL = "select title, name, hits, content from board where mid = ?";
-							System.out.println("제목\t작성자\t조회수");
 						}
 						else if(num2 == 3) {
 							System.out.println("로그아웃이 됩니다.");

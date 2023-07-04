@@ -4,10 +4,11 @@ create table member (
 );
     
 create table board (
-	tid INT primary key,
+	bid INT primary key,
     title varchar(20) not null,
     mid varchar(20),
     time  TIMESTAMP default current_timestamp,
     hits INT,
+    content varchar(100),
     foreign key(mid) references member(mid)
     );
