@@ -13,7 +13,7 @@ public class DAOClass {
 	public static ResultSet rs;
 	public static Connection conn;
 	public static int page = 0;
-	public static int max_page = 0;
+	public static int maxPage = 0;
 	
 	// DB 연결
 	public static Connection getConnection() {
@@ -88,7 +88,7 @@ public class DAOClass {
 		ArrayList<boardBean> list = new ArrayList<boardBean>();
 		
 		
-		String SQL = "SELECT bid, title, mid, time, hits FROM board";
+		String SQL = "SELECT bid, title, mid, time, hits FROM board limit ?, 3";
 		System.out.println("번호\t제목\t작성자\t작성일\t조회수");
 				
 			
@@ -96,6 +96,7 @@ public class DAOClass {
 		try {
 			conn = getConnection();
 			pstmt = conn.prepareStatement(SQL);
+			pstmt.setInt(1, page);
 			rs = pstmt.executeQuery();
 					
 			while(rs.next()) {
@@ -154,6 +155,8 @@ public class DAOClass {
 			"\t" + list.get(i).getMid() + "\t" + list.get(i).getHits() 
 			+ "\t" + list.get(i).getContent());
 		}
+		
+		System.out.println("--------------------------------------------\n");
 	}
 	
 	// 게시판 쓰기 
@@ -166,7 +169,6 @@ public class DAOClass {
 			rs = pstmt.executeQuery();
 			while(rs.next()) {
 				count = rs.getInt(1);
-				System.out.println("----------------count" + rs.getInt(1));
 				count++;
 			}
 				
@@ -228,5 +230,22 @@ public class DAOClass {
 		}
 		hitsUp++;
 		return hitsUp;
+	}
+	
+	// maxPage 가져오기
+	public static void maxPageGet() {
+		String SQL = "select count(*) from board";
+		int count = 0;
+		try {
+			pstmt = conn.prepareStatement(SQL);
+			rs = pstmt.executeQuery();
+			while(rs.next()) {
+				count = rs.getInt(1);
+				maxPage = count/3;
+			}
+				
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
 	}
 }

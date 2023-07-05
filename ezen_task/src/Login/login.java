@@ -96,7 +96,7 @@ public class login {
 					while(true) {
 						// 게시판 목록 출력
 						dao.board_list();
-						
+						dao.maxPageGet();
 						System.out.println("\n1. 글쓰기 2. 글보기 3. 로그아웃 4. 이전 5. 다음");
 						int num2 = sc.nextInt();
 						
@@ -109,6 +109,7 @@ public class login {
 								
 							// 글 저장
 							dao.write_board(titleIn, contentIn, id);
+							dao.maxPageGet();
 						}
 						// 글 보기
 						else if(num2 == 2) {
@@ -135,11 +136,16 @@ public class login {
 							if(dao.page == 0) {
 								System.out.println("최소 페이지입니다. 다시 선택해주시길 바랍니다.");
 							}
-							
+							else {
+								dao.page-=3;
+							}
 						}
 						else if(num2 == 5) {
-							if(dao.page == dao.max_page) {
+							if(dao.page == dao.maxPage) {
 								System.out.println("최대 페이지입니다. 다시 선택해주시길 바랍니다.");
+							}
+							else {
+								dao.page+=3;
 							}
 							
 						}
