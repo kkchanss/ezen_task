@@ -1,4 +1,4 @@
-package package1;
+package Kiosk;
 
 import java.util.Scanner;
 import java.io.*;
